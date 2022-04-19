@@ -299,7 +299,7 @@
         ],
         "name": "updateChainById",
         "outputs": [],
-        "stateMutability": "view",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
