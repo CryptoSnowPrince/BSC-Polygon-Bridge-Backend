@@ -1,19 +1,19 @@
 const ethers = require('ethers');
-const bsc_testnet = require ('./networks/bsc_testnet')
-const rinkeby = require ('./networks/rinkeby')
-const bsc = require ('./networks/bsc_mainnet')
-const matic = require ('./networks/matic_mainnet')
-const mumbai = require ('./networks/matic_testnet')
+const bsc_testnet = require('./networks/bsc_testnet')
+const rinkeby = require('./networks/rinkeby')
+const bsc = require('./networks/bsc_mainnet')
+const matic = require('./networks/matic_mainnet')
+const mumbai = require('./networks/matic_testnet')
 
 const chain_id = {
-    '4' : rinkeby,
-    '56' : bsc,
-    '137' : matic,
-    '97' : bsc_testnet,
+    '4': rinkeby,
+    '56': bsc,
+    '137': matic,
+    '97': bsc_testnet,
     '80001': mumbai,
 }
 
-bsc.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainFrom,nonce) =>{
+bsc.bridge.on('SwapInitialized', async (from, to, ammount, ticker, chainTo, chainFrom, nonce) => {
 
     console.log(`
         BSC Event Swap Emitted :
@@ -27,22 +27,25 @@ bsc.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainFrom
         nonce: ${nonce}
     `);
 
-    const message = ethers.utils.solidityKeccak256(
-        ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
-        [from, to, ammount, ticker, chainFrom, chainTo, nonce]
-    );
+    try {
+        const message = ethers.utils.solidityKeccak256(
+            ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
+            [from, to, ammount, ticker, chainFrom, chainTo, nonce]
+        );
 
-    const signature = await bsc.wallet.signMessage(ethers.utils.arrayify(message));
-    console.log(signature)
-    const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
-    console.log(tx)
-    const txhash = await tx.wait()
+        const signature = await bsc.wallet.signMessage(ethers.utils.arrayify(message));
+        console.log(signature)
+        const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
+        console.log(tx)
+        const txhash = await tx.wait()
 
-    console.log(txhash.transactionHash)
-
+        console.log(txhash.transactionHash)
+    } catch (error) {
+        console.log("bsc error: ", error)
+    }
 });
 
-matic.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainFrom,nonce) =>{
+matic.bridge.on('SwapInitialized', async (from, to, ammount, ticker, chainTo, chainFrom, nonce) => {
 
     console.log(`
         MATIC Event Swap Emitted :
@@ -56,22 +59,25 @@ matic.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainFr
         nonce: ${nonce}
     `);
 
-    const message = ethers.utils.solidityKeccak256(
-        ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
-        [from, to, ammount, ticker, chainFrom, chainTo, nonce]
-    );
+    try {
+        const message = ethers.utils.solidityKeccak256(
+            ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
+            [from, to, ammount, ticker, chainFrom, chainTo, nonce]
+        );
 
-    const signature = await matic.wallet.signMessage(ethers.utils.arrayify(message));
+        const signature = await matic.wallet.signMessage(ethers.utils.arrayify(message));
 
-    const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
-    const txhash = await tx.wait()
+        const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
+        const txhash = await tx.wait()
 
-    console.log(txhash.transactionHash)
-
+        console.log(txhash.transactionHash)
+    } catch (error) {
+        console.log("matic error: ", error)
+    }
 });
 
 
-bsc_testnet.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainFrom,nonce) =>{
+bsc_testnet.bridge.on('SwapInitialized', async (from, to, ammount, ticker, chainTo, chainFrom, nonce) => {
 
     console.log(`
         BSC TESTNET Event Swap Emitted :
@@ -85,21 +91,24 @@ bsc_testnet.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,c
         nonce: ${nonce}
     `);
 
-    const message = ethers.utils.solidityKeccak256(
-        ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
-        [from, to, ammount, ticker, chainFrom, chainTo, nonce]
-    );
+    try {
+        const message = ethers.utils.solidityKeccak256(
+            ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
+            [from, to, ammount, ticker, chainFrom, chainTo, nonce]
+        );
 
-    const signature = await bsc_testnet.wallet.signMessage(ethers.utils.arrayify(message));
+        const signature = await bsc_testnet.wallet.signMessage(ethers.utils.arrayify(message));
 
-    const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
-    const txhash = await tx.wait()
+        const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
+        const txhash = await tx.wait()
 
-    console.log(txhash.transactionHash)
-
+        console.log(txhash.transactionHash)
+    } catch (error) {
+        console.log("bsc_testnet error: ", error)
+    }
 });
 
-mumbai.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainFrom,nonce) =>{
+mumbai.bridge.on('SwapInitialized', async (from, to, ammount, ticker, chainTo, chainFrom, nonce) => {
 
     console.log(`
         MUMBAI TESTNET Event Swap Emitted :
@@ -113,21 +122,24 @@ mumbai.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainF
         nonce: ${nonce}
     `);
 
-    const message = ethers.utils.solidityKeccak256(
-        ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
-        [from, to, ammount, ticker, chainFrom, chainTo, nonce]
-    );
+    try {
+        const message = ethers.utils.solidityKeccak256(
+            ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
+            [from, to, ammount, ticker, chainFrom, chainTo, nonce]
+        );
 
-    const signature = await mumbai.wallet.signMessage(ethers.utils.arrayify(message));
+        const signature = await mumbai.wallet.signMessage(ethers.utils.arrayify(message));
 
-    const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
-    const txhash = await tx.wait()
+        const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
+        const txhash = await tx.wait()
 
-    console.log(txhash.transactionHash)
-
+        console.log(txhash.transactionHash)
+    } catch (error) {
+        console.log("mumbai error: ", error)
+    }
 });
 
-rinkeby.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chainFrom,nonce) =>{
+rinkeby.bridge.on('SwapInitialized', async (from, to, ammount, ticker, chainTo, chainFrom, nonce) => {
 
     console.log(`
         RINKEBY Event Swap Emitted :
@@ -141,17 +153,20 @@ rinkeby.bridge.on('SwapInitialized', async (from,to,ammount,ticker,chainTo,chain
         nonce: ${nonce}
     `);
 
-    const message = ethers.utils.solidityKeccak256(
-        ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
-        [from, to, ammount, ticker, chainFrom, chainTo, nonce]
-    );
+    try {
+        const message = ethers.utils.solidityKeccak256(
+            ["address", "address", "uint256", "string", "uint256", "uint256", "uint256"],
+            [from, to, ammount, ticker, chainFrom, chainTo, nonce]
+        );
 
-    const signature = await rinkeby.wallet.signMessage(ethers.utils.arrayify(message));
+        const signature = await rinkeby.wallet.signMessage(ethers.utils.arrayify(message));
 
-    const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
-    const txhash = await tx.wait()
+        const tx = await chain_id[chainTo].bridge.redeem(from, to, ammount, ticker, chainFrom, chainTo, nonce, signature)
+        const txhash = await tx.wait()
 
-    console.log(txhash.transactionHash)
-
+        console.log(txhash.transactionHash)
+    } catch (error) {
+        console.log("rinkeby error: ", error)
+    }
 });
 
